@@ -1,0 +1,508 @@
+<div class="container-fluid">
+  <div class="card">
+    <!-- <div class="parent" style="border-bottom: 0.1px solid lightgray">      
+      </div> -->
+    <div class="row">
+      <div class="col">
+        <h2><i class="far fa-user"></i> เจ้าหน้าที่รอยา</h2>
+      </div>
+      <div class="col">
+        <mat-form-field class="example-form-field" style="float: left">
+          <!-- <mat-label>เลือกช่วงวันที่</mat-label> -->
+          <mat-date-range-input
+            [formGroup]="campaignOne"
+            [rangePicker]="campaignOnePicker"
+            [comparisonStart]="campaignOne.value.start"
+            [comparisonEnd]="campaignOne.value.end"
+          >
+            <input
+              matStartDate
+              placeholder="วันที่ เริ่มต้น"
+              formControlName="start"
+              (dateChange)="startChange($event)"
+            />
+            <input
+              matEndDate
+              placeholder="สิ้นสุด"
+              formControlName="end"
+              (dateChange)="endChange($event)"
+            />
+          </mat-date-range-input>
+          <mat-datepicker-toggle
+            matSuffix
+            [for]="campaignOnePicker"
+          ></mat-datepicker-toggle>
+          <mat-date-range-picker #campaignOnePicker></mat-date-range-picker>
+        </mat-form-field>
+      </div>
+    </div>
+
+    <div class="grid-container grid-Wait">
+      <div
+        class="grid-item"
+        style="border-top: 0.1px solid lightgray; height: 620px"
+      >
+        <div class="row">
+          <div class="col">
+            <h4
+              class="list {{ selectedType == '1' ? 'selected' : '' }}"
+              (click)="selectType(1)"
+            >
+              <i class="fas fa-hospital"></i> วอร์ด
+            </h4>
+            <h4
+              class="list {{ selectedType == '2' ? 'selected' : '' }}"
+              (click)="selectType(2)"
+            >
+              <i class="fa fa-users" aria-hidden="true"></i> เจ้าหน้าที่
+            </h4>
+            <h4
+              class="list {{ selectedType == '3' ? 'selected' : '' }}"
+              (click)="selectType(3)"
+            >
+              <i class="fas fa-pills"></i> ไอเทม
+            </h4>
+            <h4
+              class="list {{ selectedType == '4' ? 'selected' : '' }}"
+              (click)="selectType(4)"
+            >
+              <i class="fas fa-clock"></i> ช่วงเวลา
+            </h4>
+          </div>
+        </div>
+        <div class="h4" style="margin-top: 16.5em">
+          <a href="#Dashboard">
+            <i class="fa fa-home pt-10" aria-hidden="true"></i
+          ></a>
+        </div>
+      </div>
+      <div
+        class="grid-item"
+        style="border-left: 0.1px solid lightgray; padding-left: 0.5em"
+      >
+        <div [hidden]="selectedType != '1'">
+          <div
+            [hidden]="listWaitWard.length > 0"
+            style="border-top: 0.1px solid lightgray"
+          >
+            <div class="center mt-2">
+              <H2 style="color: #adb5bd">
+                <i class="fas fa-exclamation-circle"></i>
+                ไม่พบข้อมูลในช่วงวันที่ท่านเลือก</H2
+              >
+            </div>
+          </div>
+          <div [hidden]="listWaitWard.length == 0">
+            <div>
+              <section class="table-container" tabindex="0">
+                <table
+                  mat-table
+                  [dataSource]="dataWaitWard"
+                  #sortWaitWard="matSort"
+                  matSort
+                  class="table table-striped"
+                  matSortActive="ward"
+                  matSortDirection="asc"
+                  matTableExporter
+                  #exporterWard="matTableExporter"
+                >
+                  <ng-container matColumnDef="indexrow">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                      ลำดับ
+                    </th>
+                    <td mat-cell *matCellDef="let element">
+                      {{ element.indexrow }}
+                    </td>
+                  </ng-container>
+                  <ng-container matColumnDef="ward">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                      รหัสวอร์ด
+                    </th>
+                    <td mat-cell *matCellDef="let element" class="">
+                      {{ element.ward }}
+                    </td>
+                  </ng-container>
+                  <ng-container matColumnDef="ward_name">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                      ชื่อวอร์ด
+                    </th>
+                    <td mat-cell *matCellDef="let element" class="">
+                      {{ element.ward_name }}
+                    </td>
+                  </ng-container>
+                  <ng-container matColumnDef="oQty">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                      จำนวนใบยาที่มารอ
+                    </th>
+                    <td mat-cell *matCellDef="let element" class="center">
+                      {{ element.oQty }}
+                    </td>
+                  </ng-container>
+                  <ng-container matColumnDef="iAvg">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                      จำนวนไอเทม เฉลี่ยที่เบิก
+                    </th>
+                    <td mat-cell *matCellDef="let element" class="center">
+                      {{ element.iAvg }}
+                    </td>
+                  </ng-container>
+                  <ng-container matColumnDef="iMax">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                      จำนวนไอเทม มากที่สุดต่อใบ
+                    </th>
+                    <td mat-cell *matCellDef="let element" class="center">
+                      {{ element.iMax }}
+                    </td>
+                  </ng-container>
+
+                  <tr
+                    mat-header-row
+                    *matHeaderRowDef="displayWaitWard; sticky: true"
+                  ></tr>
+                  <tr
+                    mat-row
+                    *matRowDef="let row; columns: displayWaitWard"
+                  ></tr>
+                </table>
+              </section>
+            </div>
+            <div class="row">
+              <div class="col right">
+                <mat-paginator
+                  #paginWaitWard="matPaginator"
+                  style="display: flex; justify-content: center"
+                  [length]="10"
+                  [pageSize]="10"
+                  [pageSizeOptions]="[10, 25, 50]"
+                  showFirstLastButtons
+                >
+                </mat-paginator>
+              </div>
+              <div class="col-2 right">
+                <button
+                  type="button"
+                  class="btn btn-light mt-4"
+                  (click)="
+                    exporterWard.exportTable('xlsx', {
+                      fileName:
+                        'รายงานรอยา(วอร์ด)_' + startDate + '_ถึง_' + endDate,
+                      sheet: 'sheet1',
+                      Props: { Author: 'Talha' }
+                    })
+                  "
+                >
+                  <i class="far fa-file-excel"></i> ส่งออกไฟล์
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div [hidden]="selectedType != '2'">
+          <div
+            [hidden]="listWaitIden.length > 0"
+            style="border-top: 0.1px solid lightgray"
+          >
+            <div class="center mt-2">
+              <H2 style="color: #adb5bd">
+                <i class="fas fa-exclamation-circle"></i>
+                ไม่พบข้อมูลในช่วงวันที่ท่านเลือก</H2
+              >
+            </div>
+          </div>
+          <div [hidden]="listWaitIden.length == 0">
+            <div>
+              <section class="table-container" tabindex="0">
+                <table
+                  mat-table
+                  [dataSource]="dataWaitIden"
+                  #sortWaitIden="matSort"
+                  matSort
+                  class="table table-striped"
+                  matSortActive="qty"
+                  matSortDirection="desc"
+                  matTableExporter
+                  #exporterIden="matTableExporter"
+                >
+                  <ng-container matColumnDef="indexrow">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                      ลำดับ
+                    </th>
+                    <td mat-cell *matCellDef="let element">
+                      {{ element.indexrow }}
+                    </td>
+                  </ng-container>
+                  <ng-container matColumnDef="iden_name">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                      ชื่อเจ้าหน้าที่
+                    </th>
+                    <td mat-cell *matCellDef="let element" class="">
+                      {{ element.fname }} {{ element.lname }}
+                    </td>
+                  </ng-container>
+                  <ng-container matColumnDef="ward_name">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                      ชื่อวอร์ด
+                    </th>
+                    <td mat-cell *matCellDef="let element" class="">
+                      {{ element.ward_name }}
+                    </td>
+                  </ng-container>
+                  <ng-container matColumnDef="qty">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                      จำนวนใบยาที่มารอ
+                    </th>
+                    <td mat-cell *matCellDef="let element" class="center">
+                      {{ element.qty }}
+                    </td>
+                  </ng-container>
+                  <tr
+                    mat-header-row
+                    *matHeaderRowDef="displayWaitIden; sticky: true"
+                  ></tr>
+                  <tr
+                    mat-row
+                    *matRowDef="let row; columns: displayWaitIden"
+                  ></tr>
+                </table>
+              </section>
+            </div>
+            <div class="row">
+              <div class="col">
+                <mat-paginator
+                  #paginWaitIden="matPaginator"
+                  style="display: flex; justify-content: center"
+                  [length]="10"
+                  [pageSize]="10"
+                  [pageSizeOptions]="[10, 25, 50]"
+                  showFirstLastButtons
+                >
+                </mat-paginator>
+              </div>
+              <div class="col-2 right">
+                <button
+                  type="button"
+                  class="btn btn-light mt-4"
+                  (click)="
+                    exporterIden.exportTable('xlsx', {
+                      fileName:
+                        'รายงานรอยา(เจ้าหน้าที่)_' +
+                        startDate +
+                        '_ถึง_' +
+                        endDate,
+                      sheet: 'sheet1',
+                      Props: { Author: 'Talha' }
+                    })
+                  "
+                >
+                  <i class="far fa-file-excel"></i> ส่งออกไฟล์
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div [hidden]="selectedType != '3'">
+          <div
+            [hidden]="listWaitItem.length > 0"
+            style="border-top: 0.1px solid lightgray"
+          >
+            <div class="center mt-2">
+              <H2 style="color: #adb5bd">
+                <i class="fas fa-exclamation-circle"></i>
+                ไม่พบข้อมูลในช่วงวันที่ท่านเลือก</H2
+              >
+            </div>
+          </div>
+          <div [hidden]="listWaitItem.length == 0">
+            <div>
+              <section class="table-container" tabindex="0">
+                <table
+                  mat-table
+                  [dataSource]="dataWaitItem"
+                  #sortWaitItem="matSort"
+                  matSort
+                  class="table table-striped"
+                  matSortActive="freq"
+                  matSortDirection="desc"
+                  matTableExporter
+                  #exporterItem="matTableExporter"
+                >
+                  <ng-container matColumnDef="indexrow">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                      ลำดับ
+                    </th>
+                    <td mat-cell *matCellDef="let element">
+                      {{ element.indexrow }}
+                    </td>
+                  </ng-container>
+                  <ng-container matColumnDef="item_name">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                      ชื่อไอเทม
+                    </th>
+                    <td mat-cell *matCellDef="let element" class="">
+                      {{ element.item_name }}
+                    </td>
+                  </ng-container>
+                  <ng-container matColumnDef="freq">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                      จำนวนไอเทม:ใบสั่งยา
+                    </th>
+                    <td mat-cell *matCellDef="let element" class="center">
+                      {{ element.freq }}
+                    </td>
+                  </ng-container>
+                  <ng-container matColumnDef="total">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                      จำนวนไอเทมรวม
+                    </th>
+                    <td mat-cell *matCellDef="let element" class="center">
+                      {{ element.total }}
+                    </td>
+                  </ng-container>
+                  <!-- <ng-container matColumnDef="item_unit">
+                      <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                        หน่วย
+                      </th>
+                      <td mat-cell *matCellDef="let element" class="">
+                        {{ element.item_unit }}
+                      </td>
+                    </ng-container> -->
+
+                  <tr
+                    mat-header-row
+                    *matHeaderRowDef="displayWaitItem; sticky: true"
+                  ></tr>
+                  <tr
+                    mat-row
+                    *matRowDef="let row; columns: displayWaitItem"
+                  ></tr>
+                </table>
+              </section>
+            </div>
+            <div class="row">
+              <div class="col">
+                <mat-paginator
+                  #paginWaitItem="matPaginator"
+                  style="display: flex; justify-content: center"
+                  [length]="10"
+                  [pageSize]="10"
+                  [pageSizeOptions]="[10, 25, 50]"
+                  showFirstLastButtons
+                >
+                </mat-paginator>
+              </div>
+              <div class="col-2 right">
+                <button
+                  type="button"
+                  class="btn btn-light mt-4"
+                  (click)="
+                    exporterItem.exportTable('xlsx', {
+                      fileName:
+                        'รายงานรอยา(ไอเทม)_' + startDate + '_ถึง_' + endDate,
+                      sheet: 'sheet1',
+                      Props: { Author: 'Talha' }
+                    })
+                  "
+                >
+                  <i class="far fa-file-excel"></i> ส่งออกไฟล์
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div [hidden]="selectedType != '4'">
+          <div
+            [hidden]="listWaitPeriod.length > 0"
+            style="border-top: 0.1px solid lightgray"
+          >
+            <div class="center mt-2">
+              <H2 style="color: #adb5bd">
+                <i class="fas fa-exclamation-circle"></i>
+                ไม่พบข้อมูลในช่วงวันที่ท่านเลือก</H2
+              >
+            </div>
+          </div>
+          <div [hidden]="listWaitPeriod.length == 0">
+            <div>
+              <section class="table-container" tabindex="0">
+                <table
+                  mat-table
+                  [dataSource]="dataWaitPeriod"
+                  #sortWaitPeriod="matSort"
+                  matSort
+                  class="table table-striped"
+                  matSortActive="qty"
+                  matSortDirection="desc"
+                  matTableExporter
+                  #exporterTimer="matTableExporter"
+                >
+                  <ng-container matColumnDef="indexrow">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                      ลำดับ
+                    </th>
+                    <td mat-cell *matCellDef="let element">
+                      {{ element.indexrow }}
+                    </td>
+                  </ng-container>
+                  <ng-container matColumnDef="period">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                      ช่วงเวลา
+                    </th>
+                    <td mat-cell *matCellDef="let element" class="center">
+                      {{ element.period }}:00 - {{ element.period }}:59
+                    </td>
+                  </ng-container>
+                  <ng-container matColumnDef="qty">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                      จำนวนใบยาที่มารอ
+                    </th>
+                    <td mat-cell *matCellDef="let element" class="center">
+                      {{ element.qty }}
+                    </td>
+                  </ng-container>
+
+                  <tr
+                    mat-header-row
+                    *matHeaderRowDef="displayWaitPeriod; sticky: true"
+                  ></tr>
+                  <tr
+                    mat-row
+                    *matRowDef="let row; columns: displayWaitPeriod"
+                  ></tr>
+                </table>
+              </section>
+            </div>
+            <div class="row">
+              <div class="col">
+                <mat-paginator
+                  #paginWaitPeriod="matPaginator"
+                  style="display: flex; justify-content: center"
+                  [length]="10"
+                  [pageSize]="10"
+                  [pageSizeOptions]="[10, 25, 50]"
+                  showFirstLastButtons
+                >
+                </mat-paginator>
+              </div>
+              <div class="col-2 right">
+                <button
+                  type="button"
+                  class="btn btn-light mt-4"
+                  (click)="
+                    exporterTimer.exportTable('xlsx', {
+                      fileName:
+                        'รายงานรอยา(ช่วงเวลา)_' + startDate + '_ถึง_' + endDate,
+                      sheet: 'sheet1',
+                      Props: { Author: 'Talha' }
+                    })
+                  "
+                >
+                  <i class="far fa-file-excel"></i> ส่งออกไฟล์
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,256 @@
+<div (click)="timerOut(1)">
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <a class="navbar-brand" href="#">
+      <!-- <img src="/assets/img/logo.png" /> -->
+      <img src="/MedDorm/assets/img/logo.png" />
+      ระบบกระจายยาหอผู้ป่วย</a
+    >
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-toggle="collapse"
+      data-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav mr-auto">
+        <!-- <li class="nav-item active">
+          <a class="nav-link" href="#"
+            >Home <span class="sr-only">(current)</span></a
+          >
+        </li> -->
+        <li class="nav-item">
+          <a class="nav-link" href="#/DashboardV2">หน้าหลัก</a>
+        </li>
+        <li class="nav-item dropdown">
+          <a
+            class="nav-link dropdown-toggle"
+            href="#"
+            role="button"
+            data-toggle="dropdown"
+            aria-expanded="false"
+          >
+            รายงาน
+          </a>
+          <div class="dropdown-menu">
+            <a class="dropdown-item" href="#/History">ประวัติการใช้งาน</a>
+            <a class="dropdown-item" href="#/Timer">เวลาในตู้</a>
+            <a class="dropdown-item" href="#/Wait">ยาเจ้าหน้าที่รอ</a>
+            <a class="dropdown-item" href="#/Ems/Report">ยาด่วน</a>
+            <!-- <div class="dropdown-divider"></div>
+            <a class="dropdown-item" href="#">Something else here</a> -->
+          </div>
+        </li>
+      </ul>
+      <button class="btn btn-info my-2 my-sm-0 mr-2" [routerLink]="['/Ems']">
+        ยาด่วน
+      </button>
+
+      <button
+        class="btn btn-warning my-2 my-sm-0 mr-2"
+        (click)="setOption('wait')"
+      >
+        ยารอ
+      </button>
+      <button
+        class="btn btn-danger my-2 my-sm-0 mr-2"
+        data-toggle="modal"
+        data-target="#dutyModal"
+      >
+        ขึ้นเวร
+      </button>
+
+      <button
+        class="btn btn-danger my-2 my-sm-0 mr-2"
+        (click)="LogOut()"
+        *ngIf="userId"
+      >
+        <i class="fas fa-sign-out-alt"></i> Logout
+      </button>
+      <form class="form-inline" *ngIf="!userId">
+        <div class="input-group">
+          <div class="input-group-prepend">
+            <span class="input-group-text" id="basic-addon1"
+              ><i class="fas fa-sign-in-alt"></i
+            ></span>
+          </div>
+          <input
+            type="text"
+            class="form-control"
+            placeholder="เข้าสู่ระบบ"
+            aria-label=""
+            aria-describedby="basic-addon1"
+            #swiperLogin
+            (keyup.enter)="login(swiperLogin.value); swiperLogin.value = ''"
+          />
+        </div>
+      </form>
+
+      <!-- <p class="my-2 my-sm-0 user mr-2">
+        {{ userName }}
+      </p>
+      <form class="form-inline my-2 my-lg-0">
+        <input
+          class="form-control mr-sm-2"
+          type="login"
+          [placeholder]="working"
+          aria-label="login"
+          #swiperLogin
+          (keyup.enter)="login(swiperLogin.value); swiperLogin.value = ''"
+        />
+      </form>
+      <button class="btn btn-danger my-2 my-sm-0" (click)="LogOut()" *ngIf="id">
+        <i class="fas fa-sign-out-alt"></i>
+      </button> -->
+    </div>
+  </nav>
+  <router-outlet></router-outlet>
+</div>
+
+<div
+  class="modal fade"
+  id="dutyModal"
+  data-backdrop="static"
+  data-keyboard="false"
+  tabindex="-1"
+  aria-labelledby="dutyModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title" id="dutyModalLabel">ขึ้นเวร</h2>
+        <button
+          type="button"
+          class="close"
+          data-dismiss="modal"
+          aria-label="Close"
+        >
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="mt-2 mb-2">
+          <!-- <select class="form-control" (change)="changeWard($event)">
+            <option>เลือกวอร์ดที่มาขึ้นเวร</option>
+            <option *ngFor="let x of listWard" [value]="x">
+              {{ x.ward_id }} - {{ x.ward_name }}
+            </option>
+          </select> -->
+
+          <select class="form-control" (change)="changeWard($event)">
+            <option>เลือกวอร์ดที่มาขึ้นเวร</option>
+            <option *ngFor="let x of listWard" [value]="x.ward_id">
+              {{ x.ward_id }} - {{ x.ward_name }}
+            </option>
+          </select>
+        </div>
+
+        <div class="input-group mb-2" *ngIf="selectedWard">
+          <div class="input-group-prepend">
+            <span class="input-group-text" id="basic-addon1"
+              ><i class="fas fa-sign-in-alt"></i
+            ></span>
+          </div>
+          <input
+            type="text"
+            class="form-control"
+            placeholder="เข้าสู่ระบบ"
+            aria-label=""
+            aria-describedby="basic-addon1"
+            #swiperDuty
+            (keyup.enter)="duty(swiperDuty.value); swiperDuty.value = ''"
+          />
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">
+          ยกเลิก
+        </button>
+        <!-- <button type="button" class="btn btn-primary">Understood</button> -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<div
+  class="modal fade"
+  id="waitModal"
+  data-backdrop="static"
+  data-keyboard="false"
+  tabindex="-1"
+  aria-labelledby="waitModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title" id="waitModalLabel">ยารอ</h2>
+        <button
+          type="button"
+          class="close"
+          data-dismiss="modal"
+          aria-label="Close"
+          (click)="clear()"
+        >
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="input-group mt-2 mb-2">
+          <div class="input-group-prepend">
+            <span class="input-group-text" id="basic-addon1"
+              ><i class="fas fa-sign-in-alt"></i
+            ></span>
+          </div>
+          <input
+            type="text"
+            class="form-control"
+            placeholder="เข้าสู่ระบบ"
+            aria-label=""
+            aria-describedby="basic-addon1"
+            #swiperWait
+            (keyup.enter)="wait(swiperWait.value); swiperWait.value = ''"
+          />
+        </div>
+        <div *ngIf="waitName" class="center mb-2">
+          <h2>ผู้ปฏิบัติงาน : {{ waitName }}</h2>
+          <div class="input-group">
+            <div class="input-group-prepend">
+              <span class="input-group-text" id="basic-addon1"
+                ><i class="fas fa-barcode"></i
+              ></span>
+            </div>
+            <input
+              type="text"
+              class="form-control"
+              placeholder="ใบสั่งยา"
+              aria-label=""
+              aria-describedby="basic-addon1"
+              #swiperBCode
+              (keyup.enter)="
+                sendBCode(swiperBCode.value); swiperBCode.value = ''
+              "
+            />
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          data-dismiss="modal"
+          (click)="clear()"
+        >
+          ยกเลิก
+        </button>
+        <!-- <button type="button" class="btn btn-primary">Understood</button> -->
+      </div>
+    </div>
+  </div>
+</div>

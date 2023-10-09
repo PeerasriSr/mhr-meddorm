@@ -1,0 +1,101 @@
+.spaces {
+  // color: #0d6efd;
+  text-align: center;
+  // border: 1px solid #000;
+}
+
+.inload {
+  .numOders {
+    color: #198754;
+  }
+  color: #fff;
+  background-color: #198754;
+}
+
+.unload {
+  background-color: #c5c5c5;
+  // background-image: linear-gradient(to bottom right, #C5C5C5, #3B3B3B);
+  // background-image: url("/assets/locker-0.png");
+  // background-size: cover;
+  .numOders {
+    color: #c5c5c5;
+  }
+}
+
+.wardName {
+  height: 40px;
+}
+
+.numOders {
+  font-size: 1.2em;
+  position: absolute;
+  text-align: center;
+  width: 20px;
+  padding-top: 6px;
+  font-weight: bold;
+}
+
+.checkIn {
+  .numOders {
+    color: #198754;
+  }
+  color: #fff;
+  background-color: #198754;
+}
+
+.checkOut {
+  .numOders {
+    color: #198754;
+  }
+  color: #fff;
+  background-color: #198754;
+}
+
+.edit {
+  color: #0d6efd;
+}
+
+.edit:hover {
+  color: #000;
+}
+
+.btnBarcode {
+  color: #f7f7f7;
+  // border-radius: 50%;
+  // border-top-right-radius: 0;
+  // border-bottom-right-radius: 0;
+  height: 52px;
+  width: 50px;
+  padding: 0;
+  // font-size: 24px;
+  margin-bottom: 10px;
+  background-color: #3366cc;
+}
+
+// .moveIn {
+//   background-color: #198754;
+// }
+
+// .moveOut {
+//   background-color: #6610f2;
+// }
+
+.cOut,
+.cOut mat-paginator {
+  background-color: #198754;
+  color: #fff;
+}
+
+.grid-checkOut {
+  height: 100%;
+  display: grid;
+  column-gap: 8px;
+  grid-template-columns: 75% auto;
+  // padding: 10px;
+}
+
+.mat-grid-tile-content {
+  top: 8px !important;
+  align-items: flex-start !important;
+}
+

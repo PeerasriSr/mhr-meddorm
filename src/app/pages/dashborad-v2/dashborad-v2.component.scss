@@ -1,0 +1,128 @@
+.storage_name {
+  text-align: center;
+  font-size: 2rem;
+  font-weight: bold;
+  color: #fff;
+  margin-top: 4px;
+  margin-bottom: 12px;
+}
+
+.stor {
+  background-color: #4e5760;
+  padding: 8px;
+}
+
+.spaces {
+  text-align: center;
+  vertical-align: middle;
+  // border: 1px solid #444444;
+  box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px,
+    rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
+}
+
+.inload {
+  color: #f3f4f5;
+  background-color: #446fa0;
+  .numOders {
+    color: #446fa0;
+  }
+}
+
+.unload {
+  color: #4e5760;
+  background-color: #d6dde0;
+  .numOders {
+    color: #d6dde0;
+  }
+}
+
+.numOders {
+  font-size: 1.5rem;
+  position: absolute;
+  text-align: center;
+  width: 1.75rem;
+  padding-top: 1rem;
+  font-weight: bold;
+}
+
+.wardCode {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.wardName {
+  font-size: 1rem;
+  font-weight: bold;
+}
+
+.cardIn {
+  background-color: #027165;
+  color: #fff;
+}
+
+.checkIn {
+  color: #fff;
+  background-color: #027165;
+  .numOders {
+    color: #027165;
+  }
+}
+
+.cardOut {
+  background-color: #b23c3c;
+  color: #fff;
+}
+
+.checkOut {
+  color: #fff;
+  background-color: #b23c3c;
+  .numOders {
+    color: #b23c3c;
+  }
+}
+
+.areaCheckIn {
+  background-color: #e8fffc;
+}
+.areaCheckOut {
+  background-color: #f6e4e4;
+}
+
+.input-group-text {
+  background-color: #fff !important;
+}
+
+.input-group {
+  margin-top: 8px;
+}
+
+.scan {
+  margin-top: 8px;
+  background-color: #2d4969;
+  p {
+    margin-top: 8px;
+    text-align: center;
+    font-size: 1.5rem;
+    color: #fff;
+  }
+}
+
+.firstname {
+  padding: 0px;
+}
+
+.wardName {
+  p {
+    margin-top: 8px;
+    margin-bottom: 0px;
+    font-size: 1.5rem;
+  }
+}
+
+.maxText {
+  //  font-size: 0.125rem;
+  white-space: nowrap;
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

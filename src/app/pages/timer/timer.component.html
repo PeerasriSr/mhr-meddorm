@@ -1,0 +1,416 @@
+<div class="container-fluid">
+  <div
+    class="grid-container {{ selectSumTime.length > 0 ? 'grid-timer' : '' }}"
+  >
+    <div class="grid-item">
+      <div class="card">
+        <div class="row">
+          <div class="col">
+            <h2>
+              <i class="far fa-clock"></i>
+              เวลาในตู้
+            </h2>
+          </div>
+          <div class="col">
+            <mat-form-field class="example-form-field" style="float: left">
+              <!-- <mat-label>เลือกช่วงวันที่</mat-label> -->
+              <mat-date-range-input
+                [formGroup]="campaignOne"
+                [rangePicker]="campaignOnePicker"
+                [comparisonStart]="campaignOne.value.start"
+                [comparisonEnd]="campaignOne.value.end"
+              >
+                <input
+                  matStartDate
+                  placeholder="วันที่ เริ่มต้น"
+                  formControlName="start"
+                  (dateChange)="startChange($event)"
+                />
+                <input
+                  matEndDate
+                  placeholder="สิ้นสุด"
+                  formControlName="end"
+                  (dateChange)="endChange($event)"
+                />
+              </mat-date-range-input>
+              <mat-datepicker-toggle
+                matSuffix
+                [for]="campaignOnePicker"
+              ></mat-datepicker-toggle>
+              <mat-date-range-picker #campaignOnePicker></mat-date-range-picker>
+            </mat-form-field>
+          </div>
+        </div>
+        <div class="row" [hidden]="listAvgTime.length > 0">
+          <div class="col h4">
+            <a href="#Dashboard">
+              <i class="fa fa-home homeBtn" aria-hidden="true"></i
+            ></a>
+          </div>
+          <div class="col center">
+            <H2 style="color: #adb5bd">
+              <i class="fas fa-exclamation-circle"></i>
+              ไม่พบข้อมูลในช่วงวันที่ท่านเลือก</H2
+            >
+          </div>
+          <div class="col"></div>
+        </div>
+        <div [hidden]="listAvgTime.length == 0">
+          <div>
+            <section class="table-container" tabindex="0">
+              <table
+                mat-table
+                [dataSource]="dataAvgTime"
+                #sortAvgTime="matSort"
+                matSort
+                class="table table-striped"
+                matSortActive="ward_id"
+                matSortDirection="asc"
+                matTableExporter
+                #exporterTimer="matTableExporter"
+              >
+                <ng-container matColumnDef="indexrow">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                    ลำดับ
+                  </th>
+                  <td mat-cell *matCellDef="let element">
+                    {{ element.indexrow }}
+                  </td>
+                </ng-container>
+                <ng-container matColumnDef="ward_id">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                    รหัสวอร์ด
+                  </th>
+                  <td mat-cell *matCellDef="let element" class="">
+                    {{ element.ward_id }}
+                  </td>
+                </ng-container>
+                <ng-container matColumnDef="ward_name">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                    ชื่อวอร์ด
+                  </th>
+                  <td mat-cell *matCellDef="let element" class="">
+                    {{ element.ward_name }}
+                  </td>
+                </ng-container>
+                <ng-container matColumnDef="qty">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                    จำนวนใบสั่งยา
+                  </th>
+                  <td mat-cell *matCellDef="let element" class="right num">
+                    {{ element.qty }}
+                  </td>
+                </ng-container>
+                <ng-container matColumnDef="avgTime">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                    เวลาเฉลี่ย
+                  </th>
+                  <td mat-cell *matCellDef="let element" class="center">
+                    {{ element.avgTime }}
+                  </td>
+                </ng-container>
+                <ng-container matColumnDef="option">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                    รายละเอียด
+                  </th>
+                  <td mat-cell *matCellDef="let element" class="center">
+                    <i
+                      class="fas fa-angle-double-right"
+                      (click)="
+                        viewDetail(
+                          element.ward_id,
+                          element.ward_name,
+                          element.avgTime
+                        )
+                      "
+                      style="cursor: pointer"
+                    ></i>
+                  </td>
+                </ng-container>
+
+                <tr
+                  mat-header-row
+                  *matHeaderRowDef="displayAvgTime; sticky: true"
+                ></tr>
+                <tr mat-row *matRowDef="let row; columns: displayAvgTime"></tr>
+              </table>
+            </section>
+          </div>
+          <div class="row">
+            <div class="col-1 h4">
+              <a href="#Dashboard">
+                <i class="fa fa-home homeBtn" aria-hidden="true"></i
+              ></a>
+            </div>
+            <div class="col">
+              <mat-paginator
+                #paginAvgTime="matPaginator"
+                style="display: flex; justify-content: center"
+                [length]="10"
+                [pageSize]="10"
+                [pageSizeOptions]="[10, 25, 50]"
+                showFirstLastButtons
+              >
+              </mat-paginator>
+            </div>
+            <div class="col-2 right">
+              <button
+                type="button"
+                class="btn btn-light mt-3"
+                (click)="
+                  exporterTimer.exportTable('xlsx', {
+                    fileName:
+                      'รายงานเวลาเฉลี่ย_' + startDate + '_ถึง_' + endDate,
+                    sheet: 'sheet1',
+                    Props: { Author: 'Talha' }
+                  })
+                "
+              >
+                <i class="far fa-file-excel"></i> ส่งออกไฟล์
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="grid-item" [hidden]="selectWard == ''">
+      <div class="card">
+        <div class="row">
+          <div class="col">
+            <h2><i class="far fa-hospital"></i> {{ selectWard }}</h2>
+          </div>
+          <div class="col">
+            <h2><i class="far fa-clock"></i> เฉลี่ย {{ avgWard }}</h2>
+          </div>
+          <div class="col-1 right">
+            <h2>
+              <i
+                class="fa fa-times"
+                aria-hidden="true"
+                (click)="colseDetail()"
+                style="cursor: pointer"
+              ></i>
+            </h2>
+          </div>
+        </div>
+        <div>
+          <section class="table-container" tabindex="0">
+            <table
+              mat-table
+              [dataSource]="dataSumTime"
+              #sortSumTime="matSort"
+              matSort
+              class="table table-striped"
+              matSortActive="aDate"
+              matSortDirection="asc"
+            >
+              <ng-container matColumnDef="indexrow">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>ลำดับ</th>
+                <td mat-cell *matCellDef="let element">
+                  {{ element.indexrow }}
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="aDate">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                  วันที่
+                </th>
+                <td mat-cell *matCellDef="let element" class="">
+                  {{ element.aDate }}
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="patient_order">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                  เลขใบสั่งยา
+                </th>
+                <td mat-cell *matCellDef="let element" class="">
+                  {{ element.patient_order }}
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="check_in">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                  เวลาสแกนเข้า
+                </th>
+                <td mat-cell *matCellDef="let element" class="center">
+                  {{ element.check_in }}
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="check_out">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                  เวลาสแกนออก
+                </th>
+                <td mat-cell *matCellDef="let element" class="center">
+                  {{ element.check_out }}
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="timer">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                  เวลาที่อยู่ในตู้
+                </th>
+                <td mat-cell *matCellDef="let element" class="center">
+                  {{ element.timer }}
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="option">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                  รายการยา
+                </th>
+                <td mat-cell *matCellDef="let element" class="center">
+                  <i
+                    class="fa fa-search"
+                    aria-hidden="true"
+                    style="cursor: pointer"
+                    (click)="viewOrder(element.patient_order)"
+                  ></i>
+                </td>
+              </ng-container>
+
+              <tr
+                mat-header-row
+                *matHeaderRowDef="displaySumTime; sticky: true"
+              ></tr>
+              <tr mat-row *matRowDef="let row; columns: displaySumTime"></tr>
+            </table>
+          </section>
+        </div>
+        <div class="row mb-2">
+          <div class="col">
+            <mat-paginator
+              #paginSumTime="matPaginator"
+              style="display: flex; justify-content: center"
+              [length]="10"
+              [pageSize]="10"
+              [pageSizeOptions]="[10, 25, 50]"
+              showFirstLastButtons
+            >
+            </mat-paginator>
+          </div>
+          <!-- <div class="col-3 right">
+            <button
+              type="button"
+              class="btn btn-outline-secondary mt-3"
+              (click)="
+                exporterSelect.exportTable('xlsx', {
+                  fileName:
+                    'ยาใกล้หมดอายุ' +
+                    '_' +
+                    dep +
+                    '_' +
+                    startDate +
+                    '_ถึง_' +
+                    endDate,
+                  sheet: 'sheet1',
+                  Props: { Author: 'Talha' }
+                })
+              "
+            >
+              <i class="far fa-file-excel"></i> ส่งออกไฟล์
+            </button>
+          </div> -->
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div
+  class="modal fade"
+  id="orderDetialModal"
+  data-bs-backdrop="static"
+  data-bs-keyboard="false"
+  tabindex="-1"
+  aria-labelledby="orderDetialModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title" id="orderDetialModalLabel">
+          <i class="fa fa-file-text-o" aria-hidden="true"></i> รายการยาทั้งหมด
+          {{ listOrderDetail.length }} รายการ
+        </h2>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body pt-0 pb-0">
+        <div class="row">
+          <div class="col">
+            <section class="table-container" tabindex="0">
+              <table
+                mat-table
+                [dataSource]="dataOrderDetail"
+                #sortOrderDetail="matSort"
+                matSort
+                class="table table-striped detailTable h4"
+                matSortActive="runNo"
+                matSortDirection="asc"
+              >
+                <ng-container matColumnDef="runNo">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                    ลำดับ
+                  </th>
+                  <td mat-cell *matCellDef="let element" class="">
+                    {{ element.runNo }}
+                  </td>
+                </ng-container>
+                <ng-container matColumnDef="orderitemname">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                    ชื่อยา
+                  </th>
+                  <td mat-cell *matCellDef="let element" class="">
+                    {{ element.orderitemname }}
+                  </td>
+                </ng-container>
+                <ng-container matColumnDef="qtyReq">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                    จำนวน
+                  </th>
+                  <td mat-cell *matCellDef="let element" class="right">
+                    {{ element.qtyReq }}
+                  </td>
+                </ng-container>
+                <ng-container matColumnDef="unit">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                    หน่วย
+                  </th>
+                  <td mat-cell *matCellDef="let element" class="center">
+                    {{ element.unit }}
+                  </td>
+                </ng-container>
+
+                <tr
+                  mat-header-row
+                  *matHeaderRowDef="displayOrderDetail; sticky: true"
+                ></tr>
+                <tr
+                  mat-row
+                  *matRowDef="
+                    let row;
+                    columns: displayOrderDetail;
+                    let i = index
+                  "
+                  class=""
+                ></tr>
+              </table>
+            </section>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <div class="col center">
+          <mat-paginator
+            #paginatorOrderDetail="matPaginator"
+            style="display: flex; justify-content: center"
+            [length]="10"
+            [pageSize]="10"
+            [pageSizeOptions]="[10, 25, 50]"
+            showFirstLastButtons
+          >
+          </mat-paginator>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

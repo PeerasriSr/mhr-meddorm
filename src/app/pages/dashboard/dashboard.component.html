@@ -1,0 +1,384 @@
+<div class="container-fluid">
+  <div class="grid-container {{ user_role == 2 ? 'grid-checkOut' : '' }}">
+    <div class="grid-item">
+      <div class="card">
+        <div class="row">
+          <div class="col" *ngFor="let x of listSpaces">
+            <div class="center h5">{{ x.storage_name }}</div>
+            <mat-grid-list
+              cols="{{ x.col_qty }}"
+              rowHeight="{{ x.row_qty }}:{{ x.col_qty * spaceHeight }}"
+            >
+              <!-- <mat-grid-list
+                cols="{{ x.col_qty }}"
+                rowHeight="{{ x.row_qty }}:{{ x.col_qty * 1.9 }}"
+              > -->
+              <mat-grid-tile
+                *ngFor="let sp of x.spaces"
+                [colspan]="1"
+                [rowspan]="1"
+                class="spaces {{
+                  user_role == 2
+                    ? sp.ward == user_ward && highlight == true
+                      ? 'checkOut'
+                      : 'unload'
+                    : user_role == 1
+                    ? sp.ward == wardCheckIN && highlight == true
+                      ? 'checkIn'
+                      : 'unload'
+                    : sp.qty > 0
+                    ? 'inload'
+                    : 'unload'
+                }}"
+              >
+                <div *ngIf="sp.ward">
+                  <p class="h5">{{ sp.ward }}</p>
+                  <p class="wardName">{{ sp.ward_name }}</p>
+                  <!-- <p class="order" *ngIf="sp.qty > 0">
+                      <i class="fa fa-file-text" aria-hidden="true"></i>
+                      {{ sp.qty }}
+                    </p> -->
+                  <span
+                    class=""
+                    *ngIf="sp.qty > 0"
+                    style="cursor: pointer"
+                    (click)="viewOrder(sp.ward)"
+                  >
+                    <span class="numOders"> {{ sp.qty }}</span>
+                    <i
+                      style="font-size: 26px"
+                      class="fa fa-file"
+                      aria-hidden="true"
+                    ></i>
+                  </span>
+                </div>
+                <div *ngIf="user_role == 0 && sp.qty == 0" class="edit">
+                  <i
+                    class="fa fa-wrench"
+                    aria-hidden="true"
+                    style="cursor: pointer"
+                    (click)="editSpace(sp)"
+                    data-bs-toggle="modal"
+                    data-bs-target="#editSpaceModal"
+                  ></i>
+                </div>
+              </mat-grid-tile>
+            </mat-grid-list>
+          </div>
+        </div>
+        <div class="row footer p-2">
+          <div class="col"></div>
+          <div class="col" *ngIf="user_role">
+            <!-- <button type="button" class="btn btnBarcode" *ngIf="user_role == 1">
+                ยิงเข้า
+              </button>
+              <button type="button" class="btn btnBarcode" *ngIf="user_role == 2">
+                ยิงออก
+              </button>
+              <mat-form-field appearance="outline">
+                <mat-label>Barcode</mat-label>
+                <input
+                  matInput
+                  #swiperBCode
+                  (keyup.enter)="sendBCode(swiperBCode.value); swiperBCode.value = ''"
+                />
+                <div style="font-size: 28px" matSuffix>
+                  <i class="fa fa-barcode" aria-hidden="true"></i>
+                </div>
+              </mat-form-field> -->
+            <div class="input-group">
+              <span *ngIf="user_role == 1" class="input-group-text inputRole"
+                >สแกนเข้า</span
+              >
+              <span *ngIf="user_role == 2" class="input-group-text inputRole"
+                >สแกนออก</span
+              >
+              <input
+                class="form-control"
+                placeholder="บาร์โค้ด"
+                aria-describedby="basic-addon1"
+                #swiperBCode
+                (keyup.enter)="
+                  sendBCode(swiperBCode.value); swiperBCode.value = ''
+                "
+              />
+            </div>
+          </div>
+          <!-- <div>
+            <button type="button" class="btn btn-primary" (click)="test()">
+              test
+            </button>
+          </div> -->
+          <div class="col right">
+            <!-- <a class="btn btn-primary" href="#History" role="button"
+              ><i class="fa fa-cart-arrow-down" aria-hidden="true"></i> ตามยา</a
+            > -->
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="grid-item" *ngIf="user_role == 2">
+      <div class="card cOut">
+        <div class="row">
+          <div class="col"></div>
+          <p class="h5">
+            <i class="fa fa-inbox" aria-hidden="true"></i>
+            รายการใบสั่งยาทั้งหมด {{ listOIW.length }} รายการ
+          </p>
+        </div>
+        <div [hidden]="listOIW.length == 0" class="ms-2 mx-2">
+          <section class="table-container" tabindex="0">
+            <table
+              mat-table
+              [dataSource]="dataOIW"
+              #sortOIW="matSort"
+              matSort
+              class="table table-striped"
+              matSortActive=""
+              matSortDirection="asc"
+            >
+              <ng-container matColumnDef="patient_no">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>hn</th>
+                <td mat-cell *matCellDef="let element" class="">
+                  {{ element.patient_no }}
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="patient_name">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                  ชื่อ - สกุล
+                </th>
+                <td mat-cell *matCellDef="let element" class="">
+                  {{ element.firstname }} {{ element.lastname }}
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="patient_order">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                  เลขใบสั่งยา
+                </th>
+                <td mat-cell *matCellDef="let element" class="">
+                  {{ element.patient_order }}
+                </td>
+              </ng-container>
+
+              <tr mat-header-row *matHeaderRowDef="displayOIW; sticky: true"></tr>
+              <tr
+                mat-row
+                *matRowDef="let row; columns: displayOIW; let i = index"
+              ></tr>
+            </table>
+          </section>
+
+          <div>
+            <mat-paginator
+              #paginatorOIW="matPaginator"
+              style="display: flex; justify-content: center"
+              [length]="10"
+              [pageSize]="10"
+              showFirstLastButtons
+              [hidePageSize]="true"
+            >
+            </mat-paginator>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div
+  class="modal fade"
+  id="editSpaceModal"
+  data-bs-backdrop="static"
+  data-bs-keyboard="false"
+  tabindex="-1"
+  aria-labelledby="editSpaceModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form [formGroup]="formpSpace" (ngSubmit)="submitSpace()">
+        <div class="modal-header">
+          <h2 class="modal-title" id="editSpaceModalLabel">
+            {{ selectSpace }} {{ spaceName }}
+          </h2>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+            #closeEditSpaceModal
+          ></button>
+        </div>
+        <div class="modal-body">
+          <div class="row">
+            <div class="col">
+              <!-- <label>LOT. NO</label> -->
+              <select
+                class="form-select"
+                aria-label="Default select example"
+                (change)="changeWard($event)"
+              >
+                <option selected>เลือกวอร์ดที่ต้องการ</option>
+                <option *ngFor="let x of listWard" [value]="x.ward_id">
+                  {{ x.ward_id }} -
+                  {{ x.ward_name }}
+                </option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary">ยืนยัน</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- <div
+  class="modal fade"
+  id="selectOders"
+  data-bs-backdrop="static"
+  data-bs-keyboard="false"
+  tabindex="-1"
+  aria-labelledby="selectOdersLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form (ngSubmit)="submitOders()">
+        <div class="modal-header">
+          <h1 class="modal-title pt-3" id="selectOdersLabel">
+            <i class="fa fa-file-text-o" aria-hidden="true"></i>
+            {{ showName }}
+          </h1>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
+        </div>
+        <div class="modal-body">
+          
+          <div class="row">
+            <p class="h5">
+              <i class="fa fa-exclamation-circle" aria-hidden="true"></i>
+              กรุณาเลือกใบสั่งยา
+            </p>
+          </div>
+          <div class="row h2 ms-1">
+            <div
+              class="form-check"
+              *ngFor="let x of listOrders; let i = index"
+              (change)="setOrder($event)"
+            >
+              <input
+                class="form-check-input"
+                type="checkbox"
+                value=""
+                id="flexCheckDefault"
+                [value]="i"
+              />
+              <label class="form-check-label" for="flexCheckDefault">
+                {{ x.patient_order }}
+              </label>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button
+            type="submit"
+            class="btn btn-primary"
+            *ngIf="selectOrder.length > 0"
+          >
+            ยืนยัน
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div> -->
+
+<div
+  class="modal fade"
+  id="listOrderModal"
+  data-bs-backdrop="static"
+  data-bs-keyboard="false"
+  tabindex="-1"
+  aria-labelledby="listOrderModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title" id="listOrderModalLabel">
+          <i class="fa fa-inbox" aria-hidden="true"></i>
+          รายการใบสั่งยาทั้งหมด {{ listOIW.length }} รายการ
+        </h2>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body pt-0 pb-0">
+        <div>
+          <section class="table-container" tabindex="0">
+            <table
+              mat-table
+              [dataSource]="dataOIW"
+              #sortOIW="matSort"
+              matSort
+              class="table table-striped"
+              matSortActive=""
+              matSortDirection="asc"
+            >
+              <ng-container matColumnDef="patient_no">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>hn</th>
+                <td mat-cell *matCellDef="let element" class="">
+                  {{ element.patient_no }}
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="patient_name">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                  ชื่อ - สกุล
+                </th>
+                <td mat-cell *matCellDef="let element" class="">
+                  {{ element.firstname }} {{ element.lastname }}
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="patient_order">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                  เลขใบสั่งยา
+                </th>
+                <td mat-cell *matCellDef="let element" class="">
+                  {{ element.patient_order }}
+                </td>
+              </ng-container>
+              <tr mat-header-row *matHeaderRowDef="displayOIW; sticky: true"></tr>
+              <tr
+                mat-row
+                *matRowDef="let row; columns: displayOIW; let i = index"
+              ></tr>
+            </table>
+          </section>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <div class="col center">
+          <mat-paginator
+            #paginatorOIW="matPaginator"
+            style="display: flex; justify-content: center"
+            [length]="10"
+            [pageSize]="10"
+            [pageSizeOptions]="[10, 25, 50]"
+            showFirstLastButtons
+            
+          >
+          </mat-paginator>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

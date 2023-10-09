@@ -1,0 +1,28 @@
+<div class="container">
+  <div class="card p-4" *ngIf="regisShow">
+    <div class="center">
+        <img src="/assets/logo.png" />
+        <!-- <img src="/MedDorm/assets/logo.png" /> -->
+      <h2>ระบบกระจายยาหอผู้ป่วย</h2>
+      <mat-form-field>
+        <mat-label>เลือกประเภท</mat-label>
+        <select matNativeControl (change)="selectWardType($event)">
+          <option *ngFor="let x of listWardType" [value]="x.id">
+            {{ x.name }}
+          </option>
+        </select>
+      </mat-form-field>
+      <div></div>
+      <mat-form-field>
+        <mat-label>เลือกห้อง</mat-label>
+        <select matNativeControl (change)="selectWard($event)">
+          <option *ngFor="let x of listWard" [value]="x.ward_id">
+            {{ x.ward_name }}
+          </option>
+        </select>
+      </mat-form-field>
+      <div></div>
+      <button type="button" class="btn btn-primary" (click)="submitRegis()">ลงทะเบียน</button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,296 @@
+<!-- <div (click)="timerOut(1)"> -->
+  <nav class="navbar navbar-light bg-white">
+    <div class="container-fluid">
+      <div id="inline" (click)="goHome()" style="cursor: pointer">
+        <!-- <img src="/assets/logo.png" /> -->
+        <img src="/MedDorm/assets/logo.png" />
+        <p class="h2" style="padding-left: 6px">ระบบกระจายยาหอผู้ป่วย</p>
+      </div>
+      <div class="groupBtn">
+        <button type="button" class="btn btn-info" (click)="goEms()">
+          ยาด่วน
+        </button>
+        <button type="button" class="btn btn-warning" (click)="wait()">
+          เจ้าหน้าที่รอ
+        </button>
+        <button
+          *ngIf="!id"
+          mat-button
+          data-bs-toggle="modal"
+          data-bs-target="#OT"
+        >
+          ขึ้นเวร
+        </button>
+        <button mat-button [matMenuTriggerFor]="menu">
+          รายงาน <i class="fas fa-caret-down"></i>
+        </button>
+        <mat-menu #menu="matMenu">
+          <button mat-menu-item (click)="goHitstory()">
+            <i class="fas fa-history"></i> ประวัติ
+          </button>
+          <button mat-menu-item (click)="goTimer()">
+            <i class="far fa-clock"></i> เวลาในตู้
+          </button>
+          <button mat-menu-item (click)="goEmsReport()">
+            <i class="far fa-bell"></i> ยาด่วน
+          </button>
+          <button mat-menu-item (click)="goWait()">
+            <i class="far fa-user"></i> เจ้าหน้าที่รอ
+          </button>
+        </mat-menu>
+        <button
+          type="button"
+          class="btn btn-light"
+          *ngIf="user_ward == 'gd4'"
+          (click)="goMember()"
+        >
+          สมาชิก
+        </button>
+      </div>
+      <div id="" class="right" *ngIf="!id">
+        <div class="input-group">
+          <span class="input-group-text inputRole"
+            >เข้าสู่ระบบ <i class="fa fa-sign-in ms-1" aria-hidden="true"></i
+          ></span>
+          <input
+            class="form-control"
+            placeholder="บาร์โค้ด"
+            aria-describedby="basic-addon1"
+            #swiperLogin
+            (keyup.enter)="LogIn(swiperLogin.value); swiperLogin.value = ''"
+          />
+        </div>
+        <!-- <span>เข้าสู่ระบบ</span>
+      <input
+        type="text"
+        class="form-control"
+        #swiperLogin
+        (keyup.enter)="LogIn(swiperLogin.value); swiperLogin.value = ''"
+      /> -->
+      </div>
+      <div id="inline" class="right" *ngIf="id">
+        <!-- <button
+        type="button"
+        class="btn btn-success"
+        (click)="LogInX()"
+        *ngIf="!id"
+      >
+        <i class="fa fa-sign-out" aria-hidden="true"></i> เข้าสู่ระบบ
+      </button> -->
+        <p *ngIf="user" class="h4">
+          <i class="fas fa-user-circle"></i> {{ user }}
+        </p>
+        <button
+          type="button"
+          class="btn btn-danger"
+          (click)="LogOut()"
+          *ngIf="id"
+        >
+          <i class="fa fa-sign-out" aria-hidden="true"></i> ออกจากระบบ
+        </button>
+      </div>
+    </div>
+  </nav>
+  <router-outlet></router-outlet>
+<!-- </div> -->
+<div
+  class="modal fade"
+  id="OT"
+  data-bs-backdrop="static"
+  data-bs-keyboard="false"
+  tabindex="-1"
+  aria-labelledby="OTLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title m-0" id="OTLabel">
+          <i class="far fa-calendar"></i> ขึ้นเวร
+        </h1>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+          (click)="focusLogin()"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <!-- <div class="row">
+          <div class="col">
+            <p>* เลือกวอร์ดที่มาขึ้นเวร</p>
+          </div>
+        </div> -->
+        <div class="row">
+          <div class="col">
+            <!-- <label>LOT. NO</label> -->
+            <select
+              class="form-select"
+              aria-label="Default select example"
+              (change)="changeWard($event)"
+            >
+              <option selected>เลือกวอร์ดที่มาขึ้นเวร</option>
+              <option *ngFor="let x of listWard" [value]="x.ward_id">
+                {{ x.ward_id }} -
+                {{ x.ward_name }}
+              </option>
+            </select>
+          </div>
+        </div>
+        <div class="row mt-2 center">
+          <div class="col">
+            <h1>เข้าสู่ระบบ</h1>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-2"></div>
+          <div class="col">
+            <div class="input-group">
+              <span class="input-group-text inputRole">
+                <i class="fa fa-sign-in ms-1" aria-hidden="true"></i
+              ></span>
+              <input
+                class="form-control"
+                placeholder="บาร์โค้ด"
+                aria-describedby="basic-addon1"
+                #swiperLogin2
+                (keyup.enter)="
+                  LogIn2(swiperLogin2.value); swiperLogin2.value = ''
+                "
+              />
+            </div>
+          </div>
+          <div class="col-2"></div>
+        </div>
+      </div>
+      <div class="modal-footer"></div>
+    </div>
+  </div>
+</div>
+<div
+  class="modal fade"
+  id="wait"
+  data-bs-backdrop="static"
+  data-bs-keyboard="false"
+  tabindex="-1"
+  aria-labelledby="waitLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content center">
+      <form (ngSubmit)="submitOders()">
+        <div class="modal-header">
+          <h1 class="modal-title m-0" id="waitLabel">
+            <i class="far fa-clock"></i> เจ้าหน้าที่รอยา
+          </h1>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+            (click)="closewait()"
+          ></button>
+        </div>
+        <div class="modal-body" *ngIf="waitRole == 'login'">
+          <div class="row mt-2">
+            <div class="col">
+              <h2>เข้าสู่ระบบ</h2>
+              <h3>(เจ้าหน้าที่มารับยา)</h3>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <div class="input-group">
+                <span class="input-group-text inputRole">
+                  สแกนบัตร <i class="fa fa-sign-in ms-1" aria-hidden="true"></i
+                ></span>
+                <input
+                  class="form-control"
+                  placeholder="บาร์โค้ด"
+                  aria-describedby="basic-addon1"
+                  #swiperLogin3
+                  (keyup.enter)="
+                    LogIn3(swiperLogin3.value); swiperLogin3.value = ''
+                  "
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          class="modal-body"
+          *ngIf="waitRole == 'scan' && listOrders.length == 0"
+        >
+          <div class="row mt-2">
+            <div class="col">
+              <h2>
+                <i class="fa fa-user-circle-o" aria-hidden="true"></i>
+                {{ emeUser }}
+              </h2>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <div class="input-group">
+                <span class="input-group-text inputRole">
+                  สแกนใบสั่งยา
+                  <i class="fa fa-sign-in ms-1" aria-hidden="true"></i
+                ></span>
+                <input
+                  class="form-control"
+                  placeholder="บาร์โค้ด"
+                  aria-describedby="basic-addon1"
+                  #swiperBCode
+                  (keyup.enter)="
+                    sendBCode(swiperBCode.value); swiperBCode.value = ''
+                  "
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-body" *ngIf="listOrders.length > 0">
+          <div class="row">
+            <div class="col" *ngIf="listOrders.length > 0">
+              <p class="h5">
+                <i class="fa fa-exclamation-circle" aria-hidden="true"></i>
+                กรุณาเลือกใบสั่งยา
+              </p>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col h2 ms-1" *ngIf="listOrders.length > 0">
+              <div
+                class="form-check"
+                *ngFor="let x of listOrders; let i = index"
+                (change)="setOrder($event)"
+              >
+                <input
+                  class="form-check-input"
+                  type="checkbox"
+                  value=""
+                  id="flexCheckDefault"
+                  [value]="i"
+                />
+                <label class="form-check-label" for="flexCheckDefault">
+                  {{ x.patient_order }}
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button
+            type="submit"
+            class="btn btn-primary"
+            *ngIf="selectOrder.length > 0"
+          >
+            ยืนยัน
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

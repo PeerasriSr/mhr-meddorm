@@ -1,0 +1,166 @@
+/* You can add global styles to this file, and also import other style files */
+
+html,
+body {
+  height: 100%;
+}
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+  // background-color: #647C90;
+  background-image: linear-gradient(#2e8bc0, #d4f1f4);
+}
+
+.cdk-global-overlay-wrapper,
+.cdk-overlay-container {
+  z-index: 99999 !important;
+}
+
+#inline span,
+#inline label,
+#inline input,
+#inline button,
+#inline img,
+#inline p,
+#inline div {
+  display: inline;
+  vertical-align: middle;
+}
+
+.center {
+  text-align: center;
+}
+
+.left {
+  text-align: left;
+}
+
+.right {
+  text-align: right;
+}
+
+.mat-form-field-wrapper {
+  padding-bottom: 0;
+}
+
+.card {
+  margin-top: 8px;
+  padding: 8px;
+  background-color: #fff;
+  box-shadow: rgba(50, 50, 105, 0.15) 0px 2px 5px 0px,
+    rgba(0, 0, 0, 0.05) 0px 1px 1px 0px;
+}
+
+table {
+  width: 100%;
+}
+
+th.mat-header-cell {
+  text-align: center !important;
+}
+.mat-sort-header-container {
+  justify-content: center;
+}
+
+th.mat-header-cell,
+td.mat-cell {
+  vertical-align: middle;
+  border: 0px !important;
+}
+
+
+
+.form-control:focus {
+  // border-color: #0d6efd;
+  border-color: #0d6efd;
+  box-shadow: none;
+}
+
+.inputRole {
+  background-color: #0d6efd;
+  color: #fff;
+  border: 0.1px solid #0d6efd;
+}
+
+.grid-checkOut {
+  height: 100%;
+  display: grid;
+  column-gap: 8px;
+  grid-template-columns: 75% auto;
+  // padding: 10px;
+}
+
+.mat-grid-tile-content {
+  top: 8px !important;
+  align-items: flex-start !important;
+}
+
+.mat-typography p {
+  margin: 0 0 6px !important;
+}
+
+// tr:hover {
+//   background-color: #eaeff2;
+// }
+
+// .modal {
+//   th.mat-header-cell {
+//     border-top: 0px solid;
+//   }
+
+//   td.mat-cell {
+//     border-top: 0.1px solid lightgray;
+//     border-bottom: 0px solid !important;
+//   }
+// }
+
+.parent {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.table-container {
+  height: 553px;
+  overflow: auto;
+  th.mat-header-cell {
+    // background-color: #2e8bc0;
+    // color: #fff;
+    background: linear-gradient(
+      to bottom,
+      lightgray 1%,
+      white 1% 99%,
+      lightgray 99%
+    );
+  }
+}
+
+.homeBtn{
+  margin-top: 1em
+}
+
+.mat-paginator-container {
+  flex-wrap: unset !important;
+}
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+
+input.form-control{
+  max-width: 200px !important;
+}
+
+div.input-group{
+  justify-content: center;
+}
+
+.mat-tab-label-active {
+  // background-color: #0d6efd;
+  font-size: 16px;
+  color: #3f51b5;
+  font-weight: bold;
+  // border-bottom: 2px solid #3f51b5;
+  opacity: unset !important;
+}

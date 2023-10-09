@@ -1,0 +1,340 @@
+<div class="spinner-container" *ngIf="isLoading">
+  <div class="backdrop"></div>
+  <mat-spinner></mat-spinner>
+</div>
+<div class="container-fluid">
+  <div class="row" style="margin: 0 -4px">
+    <div class="col" style="padding: 0px 4px" *ngFor="let x of listSpaces">
+      <div class="card stor" >
+        <div class="storage_name">{{ x.storage_name }}</div>
+        <mat-grid-list
+          cols="{{ x.col_qty }}"
+          rowHeight="{{ rowHeight }}"
+          gutterSize="4px"
+        >
+          <mat-grid-tile
+            *ngFor="let sp of x.spaces"
+            [colspan]="1"
+            [rowspan]="1"
+            [ngStyle]="{ 'border-radius': '8px' }"
+            class="spaces {{
+              sp.ward === wardEvent && highlight
+                ? userRole === 'In'
+                  ? 'checkIn'
+                  : 'checkOut'
+                : sp.qty > 0
+                ? 'inload'
+                : 'unload'
+            }}"
+          >
+            <div *ngIf="sp.ward">
+              <p class="wardCode">{{ sp.ward }}</p>
+              <p class="wardName">{{ sp.ward_name }}</p>
+              <span
+                class=""
+                *ngIf="sp.qty > 0"
+                style="cursor: pointer"
+                (click)="viewOrder(sp)"
+              >
+                <span class="numOders"> {{ sp.qty }}</span>
+                <i
+                  style="font-size: 2.5rem"
+                  class="fa fa-file"
+                  aria-hidden="true"
+                ></i>
+              </span>
+            </div>
+            <div *ngIf="userRole === 'admin' && sp.qty < 1">
+              <p style="cursor: pointer" (click)="editSpace(sp)">
+                <i class="fa fa-wrench edit" aria-hidden="true"></i>
+              </p>
+            </div>
+          </mat-grid-tile>
+        </mat-grid-list>
+      </div>
+    </div>
+    <div
+      class="col"
+      style="padding: 0px 4px"
+      *ngIf="listSpaces.length > 0 && userRole && wardCode !== 'gd4'"
+    >
+      <div class="card {{ userRole === 'In' ? 'cardIn' : 'cardOut' }}">
+        <div class="storage_name">Check {{ userRole }}</div>
+        <div
+          [style.height.px]="tableHeight"
+          class="listArea {{
+            userRole === 'In' ? 'areaCheckIn' : 'areaCheckOut'
+          }}"
+        >
+          <table
+            mat-table
+            [dataSource]="dataOIW"
+            class="mat-elevation {{
+              userRole === 'In' ? 'areaCheckIn' : 'areaCheckOut'
+            }}"
+          >
+            <ng-container matColumnDef="patient_order">
+              <th mat-header-cell *matHeaderCellDef>ใบสั่งยา</th>
+              <td mat-cell *matCellDef="let element">
+                {{ element.patient_order }}
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="patient_no">
+              <th mat-header-cell *matHeaderCellDef>HN</th>
+              <td mat-cell *matCellDef="let element">
+                {{ element.patient_no }}
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="patient_name">
+              <th mat-header-cell *matHeaderCellDef>ชื่อ - สกุล</th>
+              <td mat-cell *matCellDef="let element" class="maxText">
+                {{ element.firstname }} {{ element.lastname }}
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="ward">
+              <th mat-header-cell *matHeaderCellDef>ช่อง</th>
+              <td mat-cell *matCellDef="let element">
+                {{ element.ward }}
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayOIW"></tr>
+            <tr
+              mat-row
+              *matRowDef="let row; columns: displayOIW; let i = index"
+              class=""
+            ></tr>
+          </table>
+        </div>
+        <div class="center wardName">
+          <p>{{ wardName }}</p>
+        </div>
+      </div>
+      <div class="card scan">
+        <p>ผู้ปฏิบัติงาน</p>
+        <p>{{ userName }}</p>
+        <!-- <h2 class="">ผู้ปฏิบัตงาน : {{ userName }}</h2> -->
+        <div class="input-group">
+          <div class="input-group-prepend">
+            <span class="input-group-text" id="basic-addon1"
+              ><i class="fas fa-barcode"></i
+            ></span>
+          </div>
+          <input
+            type="text"
+            class="form-control"
+            placeholder="ใบสั่งยา"
+            aria-label=""
+            aria-describedby="basic-addon1"
+            #swiperBCode
+            (keyup.enter)="sendBCode(swiperBCode.value); swiperBCode.value = ''"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div
+  class="modal fade"
+  id="editSpaceModal"
+  data-backdrop="static"
+  data-keyboard="false"
+  tabindex="-1"
+  aria-labelledby="editSpaceModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title" id="editSpaceModalLabel">
+          ตั้งค่าช่อง {{ selectSpace }}
+        </h2>
+        <button
+          type="button"
+          class="close"
+          data-dismiss="modal"
+          aria-label="Close"
+        >
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <select class="form-control" (change)="changeWard($event)">
+          <option>เลือกหอผู้ป่วย</option>
+          <option *ngFor="let x of listWard" [value]="x.ward_id">
+            {{ x.ward_id }} -
+            {{ x.ward_name }}
+          </option>
+        </select>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">
+          ยกเลิก
+        </button>
+        <button type="button" class="btn btn-primary" (click)="submitSpace()">
+          ยืนยัน
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div
+  class="modal fade"
+  id="viewOrderModal"
+  tabindex="-1"
+  aria-labelledby="viewOrderModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title" id="viewOrderModalLabel">
+          {{ viewWardName }}
+        </h2>
+        <button
+          type="button"
+          class="close"
+          data-dismiss="modal"
+          aria-label="Close"
+        >
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="listArea" [style.max-height.px]="500">
+          <table mat-table [dataSource]="dataOrder" class="mat-elevation">
+            <ng-container matColumnDef="patient_order">
+              <th mat-header-cell *matHeaderCellDef>ใบสั่งยา</th>
+              <td mat-cell *matCellDef="let element">
+                {{ element.patient_order }}
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="patient_no">
+              <th mat-header-cell *matHeaderCellDef>HN</th>
+              <td mat-cell *matCellDef="let element">
+                {{ element.patient_no }}
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="patient_name">
+              <th mat-header-cell *matHeaderCellDef>ชื่อ - สกุล</th>
+              <td mat-cell *matCellDef="let element">
+                {{ element.firstname }} {{ element.lastname }}
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="ward">
+              <th mat-header-cell *matHeaderCellDef>ช่อง</th>
+              <td mat-cell *matCellDef="let element">
+                {{ element.ward }}
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayOrder"></tr>
+            <tr
+              mat-row
+              *matRowDef="let row; columns: displayOrder; let i = index"
+              class=""
+            ></tr>
+          </table>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">
+          ปิด
+        </button>
+        <!-- <button type="button" class="btn btn-primary">Save changes</button> -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- <div class="container-fluid" *ngIf="userRole === 'Out'">
+  <div class="row">
+    <div class="col" style="padding: 0px 4px">
+      <div class="card" style="background-color: #51555b">
+        <div class="storage_name">
+          {{ listSpaces[user_store]?.storage_name }}
+        </div>
+        <mat-grid-list
+          cols="{{ listSpaces[user_store]?.col_qty }}"
+          rowHeight="{{ rowHeight }}"
+          gutterSize="4px"
+        >
+          <mat-grid-tile
+            *ngFor="let sp of listSpaces[user_store]?.spaces"
+            [colspan]="1"
+            [rowspan]="1"
+            [ngStyle]="{ 'border-radius': '10px' }"
+            class="spaces {{
+              sp.ward === wardCode && highlight ? 'checkOut' : 'unload'
+            }}"
+          >
+            <div *ngIf="sp.ward">
+              <p class="wardCode">{{ sp.ward }}</p>
+              <p class="wardName">{{ sp.ward_name }}</p>
+              <span
+                class=""
+                *ngIf="sp.qty > 0"
+                style="cursor: pointer"
+                (click)="viewOrder(sp.ward)"
+              >
+                <span class="numOders"> {{ sp.qty }}</span>
+                <i
+                  style="font-size: 2.5rem"
+                  class="fa fa-file"
+                  aria-hidden="true"
+                ></i>
+              </span>
+            </div>
+          </mat-grid-tile>
+        </mat-grid-list>
+      </div>
+    </div>
+    <div class="col" style="padding: 0px 4px">
+      <div class="card" style="background-color: #b23c3c">
+        <div class="storage_name">Check Out</div>
+        <div [style.height.px]="tableHeight" class="areaCheckOut">
+          <table
+            mat-table
+            [dataSource]="dataOIW"
+            class="mat-elevation areaCheckOut"
+          >
+            <ng-container matColumnDef="check_in">
+              <th mat-header-cell *matHeaderCellDef>เวลาเข้าตู้</th>
+              <td mat-cell *matCellDef="let element">
+                {{ element.check_in }}
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="patient_no">
+              <th mat-header-cell *matHeaderCellDef>hn</th>
+              <td mat-cell *matCellDef="let element">
+                {{ element.patient_no }}
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="patient_name">
+              <th mat-header-cell *matHeaderCellDef>ชื่อ - สกุล</th>
+              <td mat-cell *matCellDef="let element">
+                {{ element.firstname }} {{ element.lastname }}
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="patient_order">
+              <th mat-header-cell *matHeaderCellDef>เลขใบสั่งยา</th>
+              <td mat-cell *matCellDef="let element">
+                {{ element.patient_order }}
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayOIW"></tr>
+            <tr
+              mat-row
+              *matRowDef="let row; columns: displayOIW; let i = index"
+              class=""
+            ></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> -->

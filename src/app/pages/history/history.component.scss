@@ -1,0 +1,49 @@
+// /* กำหนดสีพื้นหลังสำหรับคอมโพเนนต์เฉพาะหน้า */
+// :host {
+//   display: block;
+//   height: 100vh; /* ความสูงเต็มหน้าจอ */
+//   background-color: #51555b; /* แทนที่ #your-color ด้วยสีที่คุณต้องการ */
+// }
+
+
+.in {
+  color: #18a558;
+  .mat-cell {
+    color: #18a558;
+    font-weight: bold;
+  }
+}
+
+.out {
+  color: #3366cc;
+  .mat-cell {
+    color: #3366cc;
+    font-weight: bold;
+  }
+}
+
+.wait {
+  color: #f6a21e;
+  .mat-cell {
+    color: #f6a21e;
+    font-weight: bold;
+  }
+}
+
+.ems {
+  color: #0dcaf0;
+  .mat-cell {
+    color: #0dcaf0;
+    font-weight: bold;
+  }
+}
+
+.error {
+  color: #db1f48;
+  .mat-cell {
+    color: #db1f48;
+    font-weight: bold;
+  }
+}
+
+
